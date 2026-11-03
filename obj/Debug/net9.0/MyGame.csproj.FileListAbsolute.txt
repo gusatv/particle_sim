@@ -34,3 +34,4 @@
 /Users/gustavwettmarklauritzen/Gitgreier/CS_Project/MyGame/obj/Debug/net9.0/MyGame.pdb
 /Users/gustavwettmarklauritzen/Gitgreier/CS_Project/MyGame/obj/Debug/net9.0/MyGame.genruntimeconfig.cache
 /Users/gustavwettmarklauritzen/Gitgreier/CS_Project/MyGame/obj/Debug/net9.0/ref/MyGame.dll
+/Users/gustavwettmarklauritzen/Gitgreier/CS_Project/MyGame/obj/Debug/net9.0/MyGame.sourcelink.json

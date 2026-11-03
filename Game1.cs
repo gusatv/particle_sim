@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Input;
 
 namespace MyGame;
 
@@ -48,11 +49,11 @@ public class Game1 : Game
             particles.Add(new List<Particle>());
             for (int j = 0; j < width; j++)
             {
-                if (i % 2 == 0)
+                if (j > width/2)
                 {
-                    particles[i].Add(Particle.Sand);
-                }else if (i % 2 == 1){
                     particles[i].Add(Particle.Water);
+                }else if (0 == 1){
+                    particles[i].Add(Particle.Sand);
                 }else{ 
                     particles[i].Add(Particle.Air);
                 }
@@ -95,15 +96,23 @@ public class Game1 : Game
         waterTile.SetData(water_color);
         // TODO: use this.Content to load your game content here
     }
-
+    
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        for (int i = particles.Count-1; i > 0; i--)
+        if (Mouse.GetState().LeftButton == ButtonState.Pressed)
         {
-            for (int j = particles[i].Count-1; j > 0; j--)
+            int mouse_x = Mouse.GetState().X/size_per_pixel;
+            int mouse_y = Mouse.GetState().Y/size_per_pixel;
+            particles[mouse_y][mouse_x] =  Particle.Sand;
+        }
+        
+        
+        for (int i = particles.Count-1; i >= 0; i--)
+        {
+            for (int j = particles[i].Count-1; j >= 0; j--)
             {
                 if (particles[i][j] == Particle.Sand)
                 {
@@ -204,3 +213,4 @@ public class Game1 : Game
         return false;
     }
 }
+
