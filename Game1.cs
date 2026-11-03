@@ -201,7 +201,6 @@ public class Game1 : Game
 
 
         updatable = new Dictionary<Vector2, bool>();
-        
             
         for (int i = particles.Count-1; i >= 0; i--)
         {
@@ -216,6 +215,7 @@ public class Game1 : Game
                             
                             particles[i][j] = particles[i + 1][j];
                             particles[i + 1][j] = Particle.Sand;
+                            updatable.Remove(new Vector2(j, i + 1));
                             updatable.Add(new Vector2(j, i + 1), true);
                             
 
@@ -223,11 +223,13 @@ public class Game1 : Game
                         {
                             particles[i][j] = particles[i + 1][j - 1];
                             particles[i + 1][j - 1] = Particle.Sand;
+                            updatable.Remove(new Vector2(j - 1, i + 1));
                             updatable.Add(new Vector2(j - 1, i + 1), true);
                         }else if (check_pos(j, i, 1, 1))
                         {
                             particles[i][j] = particles[i + 1][j + 1];
                             particles[i + 1][j + 1] = Particle.Sand;
+                            updatable.Remove(new Vector2(j + 1, i + 1));
                             updatable.Add(new Vector2(j + 1, i + 1), true);
                         }
                     }else if (particles[i][j] == Particle.Water)
@@ -236,26 +238,31 @@ public class Game1 : Game
                         {
                             particles[i + 1][j] = Particle.Water;
                             particles[i][j] = Particle.Air;
+                            updatable.Remove(new Vector2(j, i + 1));
                             updatable.Add(new Vector2(j, i + 1), true);
                         }else if (check_pos(j, i, -1, 1))
                         {
                             particles[i + 1][j - 1] = Particle.Water;
                             particles[i][j] = Particle.Air;
+                            updatable.Remove(new Vector2(j - 1, i + 1));
                             updatable.Add(new Vector2(j - 1, i + 1), true);
                         }else if (check_pos(j, i, 1, 1))
                         {
                             particles[i + 1][j + 1] = Particle.Water;
                             particles[i][j] = Particle.Air;
+                            updatable.Remove(new Vector2(j + 1, i + 1));
                             updatable.Add(new Vector2(j + 1, i + 1), true);
                         }else if (check_pos(j, i, -1, 0))
                         {
                             particles[i][j - 1] = Particle.Water;
                             particles[i][j] = Particle.Air;
+                            updatable.Remove(new Vector2(j - 1, i));
                             updatable.Add(new Vector2(j - 1, i), true);
                         }else if (check_pos(j, i, 1, 0))
                         {
                             particles[i][j + 1] = Particle.Water;
                             particles[i][j] = Particle.Air;
+                            updatable.Remove(new Vector2(j + 1, i));
                             updatable.Add(new Vector2(j + 1, i), true);
                         }
                     }else if (particles[i][j] == Particle.Smoke)
@@ -264,26 +271,31 @@ public class Game1 : Game
                         {
                             particles[i - 1][j] = Particle.Smoke;
                             particles[i][j] = Particle.Air;
+                            updatable.Remove(new Vector2(j, i - 1));
                             updatable.Add(new Vector2(j, i - 1), true);
                         }else if (check_pos(j, i, -1, -1))
                         {
                             particles[i - 1][j - 1] = Particle.Smoke;
                             particles[i][j] = Particle.Air;
+                            updatable.Remove(new Vector2(j - 1, i - 1));
                             updatable.Add(new Vector2(j - 1, i - 1), true);
                         } else if (check_pos(j, i, 1, -1))
                         {
                             particles[i - 1][j + 1] = Particle.Smoke;
                             particles[i][j] = Particle.Air;
+                            updatable.Remove(new Vector2(j + 1, i - 1));
                             updatable.Add(new Vector2(j + 1, i - 1), true);
                         }else if (check_pos(j, i, -1, 0))
                         {
                             particles[i][j - 1] = Particle.Smoke;
                             particles[i][j] = Particle.Air;
+                            updatable.Remove(new Vector2(j - 1, i));
                             updatable.Add(new Vector2(j - 1, i), true);
                         }else if (check_pos(j, i, 1, 0))
                         {
                             particles[i][j + 1] = Particle.Smoke;
                             particles[i][j] = Particle.Air;
+                            updatable.Remove(new Vector2(j + 1, i));
                             updatable.Add(new Vector2(j + 1, i), true);
                         }
                     }
