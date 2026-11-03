@@ -25,6 +25,7 @@ public class Game1 : Game
     private int size_per_pixel;
     private Texture2D sandTile;
     private Texture2D waterTile;
+    private Particle selected_particle = Particle.Sand;
 
     public Game1()
     {
@@ -44,21 +45,26 @@ public class Game1 : Game
         _graphics.PreferredBackBufferWidth = width * size_per_pixel;
         _graphics.PreferredBackBufferHeight = height * size_per_pixel;
         _graphics.ApplyChanges();
-        for (int i = 0; i < height; i++) 
+        for (int i = 0; i < height; i++)
         {
             particles.Add(new List<Particle>());
             for (int j = 0; j < width; j++)
             {
-                if (j > width/2)
+                if (j > width / 2)
                 {
                     particles[i].Add(Particle.Water);
-                }else if (0 == 1){
+                }
+                else if (0 == 1)
+                {
                     particles[i].Add(Particle.Sand);
-                }else{ 
+                }
+                else
+                {
                     particles[i].Add(Particle.Air);
                 }
             }
         }
+
         base.Initialize();
     }
 
@@ -101,12 +107,25 @@ public class Game1 : Game
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
+        
+        
 
+        if (Keyboard.GetState().IsKeyDown(Keys.S))
+        {
+            selected_particle = Particle.Sand;
+        }else if (Keyboard.GetState().IsKeyDown(Keys.A))
+        {
+            selected_particle = Particle.Air;
+        }else if (Keyboard.GetState().IsKeyDown(Keys.W))
+        {
+            selected_particle = Particle.Water;
+        }
+        
         if (Mouse.GetState().LeftButton == ButtonState.Pressed)
         {
             int mouse_x = Mouse.GetState().X/size_per_pixel;
             int mouse_y = Mouse.GetState().Y/size_per_pixel;
-            particles[mouse_y][mouse_x] =  Particle.Sand;
+            particles[mouse_y][mouse_x] =  selected_particle;
         }
         
         
