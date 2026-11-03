@@ -16,6 +16,8 @@ enum Particle
     Smoke
 }
 
+
+
 public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
@@ -29,6 +31,7 @@ public class Game1 : Game
     private Texture2D gasTile;
     private Particle selected_particle = Particle.Sand;
     private int brush_size = 0;
+    private Dictionary<Vector2, bool> updatable; 
     
     public Game1()
     {
@@ -194,74 +197,100 @@ public class Game1 : Game
                     particles[mouse_y][mouse_x] = selected_particle;
                 }
             }
-        }   
+        }
+
+
+        updatable = new Dictionary<Vector2, bool>();
         
-        
+            
         for (int i = particles.Count-1; i >= 0; i--)
         {
             for (int j = particles[i].Count-1; j >= 0; j--)
             {
-                if (particles[i][j] == Particle.Sand)
+                if (!updatable.ContainsKey(new Vector2(j, i)))
                 {
-                    if (check_pos(j, i, 0, 1))
+                    if (particles[i][j] == Particle.Sand)
                     {
-                        particles[i][j] = particles[i + 1][j];
-                        particles[i + 1][j] = Particle.Sand;
-                    }else if (check_pos(j, i, -1, 1))
+                        if (check_pos(j, i, 0, 1))
+                        {
+                            
+                            particles[i][j] = particles[i + 1][j];
+                            particles[i + 1][j] = Particle.Sand;
+                            updatable.Add(new Vector2(j, i + 1), true);
+                            
+
+                        }else if (check_pos(j, i, -1, 1))
+                        {
+                            particles[i][j] = particles[i + 1][j - 1];
+                            particles[i + 1][j - 1] = Particle.Sand;
+                            updatable.Add(new Vector2(j - 1, i + 1), true);
+                        }else if (check_pos(j, i, 1, 1))
+                        {
+                            particles[i][j] = particles[i + 1][j + 1];
+                            particles[i + 1][j + 1] = Particle.Sand;
+                            updatable.Add(new Vector2(j + 1, i + 1), true);
+                        }
+                    }else if (particles[i][j] == Particle.Water)
                     {
-                        particles[i][j] = particles[i + 1][j - 1];
-                        particles[i + 1][j - 1] = Particle.Sand;
-                    }else if (check_pos(j, i, 1, 1))
+                        if (check_pos(j, i, 0, 1))
+                        {
+                            particles[i + 1][j] = Particle.Water;
+                            particles[i][j] = Particle.Air;
+                            updatable.Add(new Vector2(j, i + 1), true);
+                        }else if (check_pos(j, i, -1, 1))
+                        {
+                            particles[i + 1][j - 1] = Particle.Water;
+                            particles[i][j] = Particle.Air;
+                            updatable.Add(new Vector2(j - 1, i + 1), true);
+                        }else if (check_pos(j, i, 1, 1))
+                        {
+                            particles[i + 1][j + 1] = Particle.Water;
+                            particles[i][j] = Particle.Air;
+                            updatable.Add(new Vector2(j + 1, i + 1), true);
+                        }else if (check_pos(j, i, -1, 0))
+                        {
+                            particles[i][j - 1] = Particle.Water;
+                            particles[i][j] = Particle.Air;
+                            updatable.Add(new Vector2(j - 1, i), true);
+                        }else if (check_pos(j, i, 1, 0))
+                        {
+                            particles[i][j + 1] = Particle.Water;
+                            particles[i][j] = Particle.Air;
+                            updatable.Add(new Vector2(j + 1, i), true);
+                        }
+                    }else if (particles[i][j] == Particle.Smoke)
                     {
-                        particles[i][j] = particles[i + 1][j + 1];
-                        particles[i + 1][j + 1] = Particle.Sand;
+                        if (check_pos(j, i, 0, -1))
+                        {
+                            particles[i - 1][j] = Particle.Smoke;
+                            particles[i][j] = Particle.Air;
+                            updatable.Add(new Vector2(j, i - 1), true);
+                        }else if (check_pos(j, i, -1, -1))
+                        {
+                            particles[i - 1][j - 1] = Particle.Smoke;
+                            particles[i][j] = Particle.Air;
+                            updatable.Add(new Vector2(j - 1, i - 1), true);
+                        } else if (check_pos(j, i, 1, -1))
+                        {
+                            particles[i - 1][j + 1] = Particle.Smoke;
+                            particles[i][j] = Particle.Air;
+                            updatable.Add(new Vector2(j + 1, i - 1), true);
+                        }else if (check_pos(j, i, -1, 0))
+                        {
+                            particles[i][j - 1] = Particle.Smoke;
+                            particles[i][j] = Particle.Air;
+                            updatable.Add(new Vector2(j - 1, i), true);
+                        }else if (check_pos(j, i, 1, 0))
+                        {
+                            particles[i][j + 1] = Particle.Smoke;
+                            particles[i][j] = Particle.Air;
+                            updatable.Add(new Vector2(j + 1, i), true);
+                        }
                     }
-                }else if (particles[i][j] == Particle.Water)
+                }
+                else
                 {
-                    if (check_pos(j, i, 0, 1))
-                    {
-                        particles[i + 1][j] = Particle.Water;
-                        particles[i][j] = Particle.Air;
-                    }else if (check_pos(j, i, -1, 1))
-                    {
-                        particles[i + 1][j - 1] = Particle.Water;
-                        particles[i][j] = Particle.Air;
-                    }else if (check_pos(j, i, 1, 1))
-                    {
-                        particles[i + 1][j + 1] = Particle.Water;
-                        particles[i][j] = Particle.Air;
-                    }else if (check_pos(j, i, -1, 0))
-                    {
-                        particles[i][j - 1] = Particle.Water;
-                        particles[i][j] = Particle.Air;
-                    }else if (check_pos(j, i, 1, 0))
-                    {
-                        particles[i][j + 1] = Particle.Water;
-                        particles[i][j] = Particle.Air;
-                    }
-                }else if (particles[i][j] == Particle.Smoke)
-                {
-                    if (check_pos(j, i, 0, -1))
-                    {
-                        particles[i - 1][j] = Particle.Smoke;
-                        particles[i][j] = Particle.Air;
-                    }else if (check_pos(j, i, -1, -1))
-                    {
-                        particles[i - 1][j - 1] = Particle.Smoke;
-                        particles[i][j] = Particle.Air;
-                    } else if (check_pos(j, i, 1, -1))
-                    {
-                        particles[i - 1][j + 1] = Particle.Smoke;
-                        particles[i][j] = Particle.Air;
-                    }else if (check_pos(j, i, -1, 0))
-                    {
-                        particles[i ][j - 1] = Particle.Smoke;
-                        particles[i][j] = Particle.Air;
-                    }else if (check_pos(j, i, 1, 0))
-                    {
-                        particles[i][j + 1] = Particle.Smoke;
-                        particles[i][j] = Particle.Air;
-                    }
+                    updatable.Remove(new Vector2(j, i));
                 }
             }
         }
