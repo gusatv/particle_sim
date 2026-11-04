@@ -38,6 +38,8 @@ public class Game1 : Game
         [Particle.Air, Particle.Water, Particle.Smoke], // Sand
         [Particle.Air, Particle.Water] // Smoke
     ];
+    private bool paused = false;
+    private KeyboardState oldState;
     
     public Game1()
     {
@@ -135,34 +137,8 @@ public class Game1 : Game
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
-
-        if (Keyboard.GetState().IsKeyDown(Keys.Up))
-        {
-            
-            brush_size += 1;
-        }else if (Keyboard.GetState().IsKeyDown(Keys.Down))
-        {
-            if (brush_size > 0)
-            {
-                brush_size -= 1;
-            }
-        }
-
-        if (Keyboard.GetState().IsKeyDown(Keys.S))
-        {
-            selected_particle = Particle.Sand;
-        }else if (Keyboard.GetState().IsKeyDown(Keys.A))
-        {
-            selected_particle = Particle.Air;
-        }else if (Keyboard.GetState().IsKeyDown(Keys.W))
-        {
-            selected_particle = Particle.Water;
-        }else if (Keyboard.GetState().IsKeyDown(Keys.G))
-        {
-            selected_particle = Particle.Smoke;
-        }
         
-        if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+        if (Mouse.GetState().LeftButton == ButtonState.Pressed && this.IsActive)
         {
             int mouse_x = Mouse.GetState().X/size_per_pixel;
             int mouse_y = Mouse.GetState().Y/size_per_pixel;
@@ -204,82 +180,152 @@ public class Game1 : Game
             }
         }
 
-
-        updatable = new Dictionary<Vector2, bool>();
-            
-        for (int i = particles.Count-1; i >= 0; i--)
+        if (!paused)
         {
-            for (int j = particles[i].Count-1; j >= 0; j--)
+            updatable = new Dictionary<Vector2, bool>();
+
+            for (int i = particles.Count - 1; i >= 0; i--)
             {
-                if (!updatable.ContainsKey(new Vector2(j, i)))
+                for (int j = particles[i].Count - 1; j >= 0; j--)
                 {
-                    Random random = new Random();
-                    int random_dir = random.Next(0, 2);
-                    if (random_dir == 0)
+                    if (!updatable.ContainsKey(new Vector2(j, i)))
                     {
-                        random_dir = -1;
+                        Random random = new Random();
+                        int random_dir = random.Next(0, 2);
+                        if (random_dir == 0)
+                        {
+                            random_dir = -1;
+                        }
+
+                        if (particles[i][j] == Particle.Sand)
+                        {
+                            if (check_pos(j, i, 0, 1, updatable))
+                            {
+                                move(j, i, 0, 1);
+                            }
+                            else if (check_pos(j, i, random_dir, 1, updatable))
+                            {
+                                move(j, i, random_dir, 1);
+                            }
+                            else if (check_pos(j, i, -random_dir, 1, updatable))
+                            {
+                                move(j, i, -random_dir, 1);
+                            }
+                        }
+                        else if (particles[i][j] == Particle.Water)
+                        {
+                            if (check_pos(j, i, 0, 1, updatable))
+                            {
+                                move(j, i, 0, 1);
+                            }
+                            else if (check_pos(j, i, random_dir, 1, updatable))
+                            {
+                                move(j, i, random_dir, 1);
+                            }
+                            else if (check_pos(j, i, -random_dir, 1, updatable))
+                            {
+                                move(j, i, -random_dir, 1);
+                            }
+                            else if (check_pos(j, i, random_dir, 0, updatable))
+                            {
+                                move(j, i, random_dir, 0);
+                            }
+                            else if (check_pos(j, i, -random_dir, 0, updatable))
+                            {
+                                move(j, i, -random_dir, 0);
+                            }
+                        }
+                        else if (particles[i][j] == Particle.Smoke)
+                        {
+                            if (check_pos(j, i, 0, -1, updatable))
+                            {
+                                move(j, i, 0, -1);
+                            }
+                            else if (check_pos(j, i, random_dir, -1, updatable))
+                            {
+                                move(j, i, random_dir, -1);
+                            }
+                            else if (check_pos(j, i, -random_dir, -1, updatable))
+                            {
+                                move(j, i, -random_dir, -1);
+                            }
+                            else if (check_pos(j, i, random_dir, 0, updatable))
+                            {
+                                move(j, i, random_dir, 0);
+                            }
+                            else if (check_pos(j, i, -random_dir, 0, updatable))
+                            {
+                                move(j, i, -random_dir, 0);
+                            }
+                        }
                     }
-                    if (particles[i][j] == Particle.Sand)
-                    {
-                        if (check_pos(j, i, 0, 1, updatable))
-                        {
-                            move(j, i, 0, 1);
-                        }else if (check_pos(j, i, random_dir, 1, updatable))
-                        {
-                            move(j, i, random_dir, 1);
-                        }else if (check_pos(j, i, -random_dir, 1, updatable))
-                        {
-                            move(j, i, -random_dir, 1);
-                        }
-                    }else if (particles[i][j] == Particle.Water)
-                    {
-                        if (check_pos(j, i, 0, 1, updatable))
-                        {
-                            move(j, i, 0, 1);
-                        }else if (check_pos(j, i, random_dir, 1, updatable))
-                        {
-                            move(j, i, random_dir, 1);
-                        }else if (check_pos(j, i, -random_dir, 1, updatable))
-                        {
-                            move(j, i, -random_dir, 1);
-                        }else if (check_pos(j, i, random_dir, 0, updatable))
-                        {
-                            move(j, i, random_dir, 0);
-                        }else if (check_pos(j, i, -random_dir, 0, updatable))
-                        {
-                            move(j, i, -random_dir, 0);
-                        }
-                    }else if (particles[i][j] == Particle.Smoke)
-                    {
-                        if (check_pos(j, i, 0, -1, updatable))
-                        {
-                            move(j, i, 0, -1);
-                        }else if (check_pos(j, i, random_dir, -1, updatable))
-                        {
-                            move(j, i, random_dir, -1);
-                        } else if (check_pos(j, i, -random_dir, -1, updatable))
-                        {
-                            move(j, i, -random_dir, -1);
-                        }else if (check_pos(j, i, random_dir, 0, updatable))
-                        {
-                            move(j, i, random_dir, 0);
-                        }else if (check_pos(j, i, -random_dir, 0, updatable))
-                        {
-                            move(j, i, -random_dir, 0);
-                        }
-                    }
+                    //else
+                    //{
+                    //    updatable.Remove(new Vector2(j, i));
+                    //}
                 }
-                //else
-                //{
-                //    updatable.Remove(new Vector2(j, i));
-                //}
             }
         }
         // TODO: Add your update logic here
-
+        update_input();
+        
         base.Update(gameTime);
     }
 
+    private void update_input()
+    {
+        KeyboardState newState = Keyboard.GetState();
+        if (newState.IsKeyDown(Keys.Space))
+        {
+            if (!oldState.IsKeyDown(Keys.Space))
+            {
+                paused = !paused;
+            }
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.Up))
+        {
+            if (!oldState.IsKeyDown(Keys.Up))
+            {
+                brush_size += 1;
+            }
+        }else if (Keyboard.GetState().IsKeyDown(Keys.Down))
+        {
+            if (!oldState.IsKeyDown(Keys.Down))
+            {
+                if (brush_size > 0)
+                {
+                    brush_size -= 1;
+                }
+            }
+        }
+        if (Keyboard.GetState().IsKeyDown(Keys.S))
+        {
+            if (!oldState.IsKeyDown(Keys.S))
+            {
+                selected_particle = Particle.Sand;
+            }
+        }else if (Keyboard.GetState().IsKeyDown(Keys.A))
+        {
+            if (!oldState.IsKeyDown(Keys.A))
+            {
+                selected_particle = Particle.Air;
+            }
+        }else if (Keyboard.GetState().IsKeyDown(Keys.W))
+        {
+            if (!oldState.IsKeyDown(Keys.W))
+            {
+                selected_particle = Particle.Water;
+            }
+        }else if (Keyboard.GetState().IsKeyDown(Keys.G))
+        {
+            if (!oldState.IsKeyDown(Keys.G))
+            {
+                selected_particle = Particle.Smoke;
+            }
+        }
+        oldState = newState;
+    }
+    
     protected override void Draw(GameTime gameTime)
     {
         _graphics.GraphicsDevice.Clear(Color.Black);
