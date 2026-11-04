@@ -13,7 +13,8 @@ enum Particle
     Air,
     Water,
     Sand,
-    Smoke
+    Smoke,
+    Rock
 }
 
 
@@ -23,12 +24,13 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private List<List<Particle>> particles;
-    private int width;
-    private int height;
-    private int size_per_pixel;
+    private int width = 200;
+    private int height = 150;
+    private int size_per_pixel = 4;
     private Texture2D sandTile;
     private Texture2D waterTile;
     private Texture2D gasTile;
+    private Texture2D rockTile;
     private Particle selected_particle = Particle.Sand;
     private int brush_size = 0;
     private Dictionary<Vector2, bool> updatable; 
@@ -36,8 +38,10 @@ public class Game1 : Game
         [], // Air
         [Particle.Air],  // Water
         [Particle.Air, Particle.Water, Particle.Smoke], // Sand
-        [Particle.Air, Particle.Water] // Smoke
+        [Particle.Air, Particle.Water], // Smoke
+        [], // Rock
     ];
+    private List<Texture2D> textures;
     private bool paused = false;
     private KeyboardState oldState;
     
@@ -47,14 +51,12 @@ public class Game1 : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
         particles = new List<List<Particle>>();
+        textures = new List<Texture2D>();
     }
 
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
-        width = 200;
-        height = 150;
-        size_per_pixel = 4;
         _graphics.PreferredBackBufferWidth = width * size_per_pixel;
         _graphics.PreferredBackBufferHeight = height * size_per_pixel;
         _graphics.ApplyChanges();
@@ -72,64 +74,18 @@ public class Game1 : Game
 
     protected override void LoadContent()
     {
-        bool lines = true;
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        sandTile = new Texture2D(_graphics.GraphicsDevice, size_per_pixel, size_per_pixel);
-        Color[] sand_color = new Color[size_per_pixel * size_per_pixel];
-        for (int i = 0; i < sand_color.Length; i++)
-        {
-            if (i % size_per_pixel == 0)
-            {
-                lines = !lines;
-            }
-            if (lines)
-            {
-                sand_color[i] = Color.SandyBrown;
-            }
-            else
-            {
-                sand_color[i] = Color.RosyBrown;
-            }
-        }
-        
-        sandTile.SetData(sand_color);
         waterTile = new Texture2D(_graphics.GraphicsDevice, size_per_pixel, size_per_pixel);
-        Color[] water_color = new Color[size_per_pixel * size_per_pixel];
-        for (int i = 0; i < water_color.Length; i++)
-        {
-            if (i % size_per_pixel == 0)
-            {
-                lines = !lines;
-            }
-            if (lines)
-            {
-                water_color[i] = Color.Blue;
-            }
-            else
-            {
-                water_color[i] = Color.DodgerBlue;
-            }
-        }
-        waterTile.SetData(water_color);
+        create_texture(waterTile, Color.Blue, Color.DodgerBlue);
+        
+        sandTile = new Texture2D(_graphics.GraphicsDevice, size_per_pixel, size_per_pixel);
+        create_texture(sandTile, Color.SandyBrown, Color.RosyBrown);
         
         gasTile = new Texture2D(_graphics.GraphicsDevice, size_per_pixel, size_per_pixel);
-        Color[] gas_color = new Color[size_per_pixel * size_per_pixel];
-        for (int i = 0; i < gas_color.Length; i++)
-        {
-            if (i % size_per_pixel == 0)
-            {
-                lines = !lines;
-            }
-            if (lines)
-            {
-                gas_color[i] = Color.Gray;
-            }
-            else
-            {
-                gas_color[i] = Color.DarkGray;
-            }
-        }
-        gasTile.SetData(gas_color);
+        create_texture(gasTile, Color.Gray, Color.DarkGray);
+        
+        rockTile = new Texture2D(_graphics.GraphicsDevice, size_per_pixel, size_per_pixel);
+        create_texture(rockTile, Color.DarkSlateGray, Color.DimGray);
         // TODO: use this.Content to load your game content here
     }
     
@@ -322,6 +278,12 @@ public class Game1 : Game
             {
                 selected_particle = Particle.Smoke;
             }
+        }else if (Keyboard.GetState().IsKeyDown(Keys.R))
+        {
+            if (!oldState.IsKeyDown(Keys.R))
+            {
+                selected_particle = Particle.Rock;
+            }
         }
         oldState = newState;
     }
@@ -336,24 +298,12 @@ public class Game1 : Game
         {
             for (int j = 0; j < particles[i].Count; j++)
             {
-                if (particles[i][j] == Particle.Sand)
+                if (particles[i][j] != Particle.Air)
                 {
-                    tilePosition.Y = i*size_per_pixel;
-                    tilePosition.X = j*size_per_pixel;
-                    
-                    _spriteBatch.Draw(sandTile, tilePosition, Color.White);
-                } else if (particles[i][j] == Particle.Water)
-                {
-                    tilePosition.Y = i*size_per_pixel;
-                    tilePosition.X = j*size_per_pixel;
-                    
-                    _spriteBatch.Draw(waterTile, tilePosition, Color.White);
-                }else if (particles[i][j] == Particle.Smoke)
-                {
-                    tilePosition.Y = i*size_per_pixel;
-                    tilePosition.X = j*size_per_pixel;
-                    
-                    _spriteBatch.Draw(gasTile, tilePosition, Color.White);
+                    tilePosition.Y = i * size_per_pixel;
+                    tilePosition.X = j * size_per_pixel;
+
+                    _spriteBatch.Draw(textures[(int)particles[i][j]-1], tilePosition, Color.White);
                 }
             }
         }
@@ -390,6 +340,29 @@ public class Game1 : Game
             updatable.Remove(new Vector2(x, y));
             updatable.Add(new Vector2(x, y), true);
         }
+    }
+
+    void create_texture(Texture2D tile, Color color1, Color color2)
+    {
+        bool lines = true;
+        Color[] texture_color = new Color[size_per_pixel * size_per_pixel];
+        for (int i = 0; i < texture_color.Length; i++)
+        {
+            if (i % size_per_pixel == 0)
+            {
+                lines = !lines;
+            }
+            if (lines)
+            {
+                texture_color[i] = color1;
+            }
+            else
+            {
+                texture_color[i] = color2;
+            }
+        }
+        tile.SetData<Color>(texture_color);
+        textures.Add(tile);
     }
 }
 

@@ -2,12 +2,6 @@
   "version": 4,
   "targets": {
     "net9.0": {
-      "Microsoft.NET.ILLink.Tasks/9.0.22": {
-        "type": "package",
-        "build": {
-          "build/Microsoft.NET.ILLink.Tasks.props": {}
-        }
-      },
       "MonoGame.Content.Builder.Task/3.8.6.1": {
         "type": "package",
         "build": {
@@ -149,143 +143,9 @@
           "lib/netcoreapp2.0/_._": {}
         }
       }
-    },
-    "net9.0/osx-arm64": {
-      "Microsoft.NET.ILLink.Tasks/9.0.22": {
-        "type": "package",
-        "build": {
-          "build/Microsoft.NET.ILLink.Tasks.props": {}
-        }
-      },
-      "MonoGame.Content.Builder.Task/3.8.6.1": {
-        "type": "package",
-        "build": {
-          "build/MonoGame.Content.Builder.Task.props": {},
-          "build/MonoGame.Content.Builder.Task.targets": {}
-        }
-      },
-      "MonoGame.Framework.DesktopGL/3.8.6.1": {
-        "type": "package",
-        "dependencies": {
-          "MonoGame.Library.OpenAL": "1.24.3.4",
-          "MonoGame.Library.SDL": "2.32.10.2",
-          "NVorbis": "0.10.4"
-        },
-        "compile": {
-          "lib/net8.0/MonoGame.Framework.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/net8.0/MonoGame.Framework.dll": {
-            "related": ".xml"
-          }
-        },
-        "build": {
-          "build/MonoGame.Framework.DesktopGL.targets": {}
-        }
-      },
-      "MonoGame.Library.OpenAL/1.24.3.4": {
-        "type": "package",
-        "native": {
-          "runtimes/osx/native/libopenal.dylib": {}
-        }
-      },
-      "MonoGame.Library.SDL/2.32.10.2": {
-        "type": "package",
-        "native": {
-          "runtimes/osx/native/libSDL2-2.0.0.dylib": {}
-        }
-      },
-      "NVorbis/0.10.4": {
-        "type": "package",
-        "dependencies": {
-          "System.Memory": "4.5.3",
-          "System.ValueTuple": "4.5.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/NVorbis.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/NVorbis.dll": {
-            "related": ".xml"
-          }
-        }
-      },
-      "System.Memory/4.5.3": {
-        "type": "package",
-        "compile": {
-          "ref/netcoreapp2.1/_._": {}
-        },
-        "runtime": {
-          "lib/netcoreapp2.1/_._": {}
-        }
-      },
-      "System.ValueTuple/4.5.0": {
-        "type": "package",
-        "compile": {
-          "ref/netcoreapp2.0/_._": {}
-        },
-        "runtime": {
-          "lib/netcoreapp2.0/_._": {}
-        }
-      }
     }
   },
   "libraries": {
-    "Microsoft.NET.ILLink.Tasks/9.0.22": {
-      "sha512": "S61AsICGqZii54jXMY56s6xvu3PcIe9VPeBxcTAWwNt5P21l2Arcy36XfATNvZAEqoAH7OfGNzng+aoXkqhsxQ==",
-      "type": "package",
-      "path": "microsoft.net.illink.tasks/9.0.22",
-      "hasTools": true,
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Icon.png",
-        "LICENSE.TXT",
-        "Sdk/Sdk.props",
-        "THIRD-PARTY-NOTICES.TXT",
-        "analyzers/dotnet/cs/ILLink.CodeFixProvider.dll",
-        "analyzers/dotnet/cs/ILLink.RoslynAnalyzer.dll",
-        "build/Microsoft.NET.ILLink.Analyzers.props",
-        "build/Microsoft.NET.ILLink.Tasks.props",
-        "build/Microsoft.NET.ILLink.targets",
-        "microsoft.net.illink.tasks.9.0.22.nupkg.sha512",
-        "microsoft.net.illink.tasks.nuspec",
-        "tools/net472/ILLink.Tasks.dll",
-        "tools/net472/ILLink.Tasks.dll.config",
-        "tools/net472/Mono.Cecil.Mdb.dll",
-        "tools/net472/Mono.Cecil.Pdb.dll",
-        "tools/net472/Mono.Cecil.Rocks.dll",
-        "tools/net472/Mono.Cecil.dll",
-        "tools/net472/Sdk/Sdk.props",
-        "tools/net472/System.Buffers.dll",
-        "tools/net472/System.Collections.Immutable.dll",
-        "tools/net472/System.Memory.dll",
-        "tools/net472/System.Numerics.Vectors.dll",
-        "tools/net472/System.Reflection.Metadata.dll",
-        "tools/net472/System.Runtime.CompilerServices.Unsafe.dll",
-        "tools/net472/build/Microsoft.NET.ILLink.Analyzers.props",
-        "tools/net472/build/Microsoft.NET.ILLink.Tasks.props",
-        "tools/net472/build/Microsoft.NET.ILLink.targets",
-        "tools/net9.0/ILLink.Tasks.deps.json",
-        "tools/net9.0/ILLink.Tasks.dll",
-        "tools/net9.0/Mono.Cecil.Mdb.dll",
-        "tools/net9.0/Mono.Cecil.Pdb.dll",
-        "tools/net9.0/Mono.Cecil.Rocks.dll",
-        "tools/net9.0/Mono.Cecil.dll",
-        "tools/net9.0/Sdk/Sdk.props",
-        "tools/net9.0/build/Microsoft.NET.ILLink.Analyzers.props",
-        "tools/net9.0/build/Microsoft.NET.ILLink.Tasks.props",
-        "tools/net9.0/build/Microsoft.NET.ILLink.targets",
-        "tools/net9.0/illink.deps.json",
-        "tools/net9.0/illink.dll",
-        "tools/net9.0/illink.runtimeconfig.json",
-        "useSharedDesignerContext.txt"
-      ]
-    },
     "MonoGame.Content.Builder.Task/3.8.6.1": {
       "sha512": "wws1EDor7JEOfQ+YgpOznZyZsl3KD6hdbUG+OfIha6tWiKLwNkz4qPS5+stI5GMfwzuv0QiE32XemLOs7fBoNw==",
       "type": "package",
@@ -445,7 +305,6 @@
   },
   "projectFileDependencyGroups": {
     "net9.0": [
-      "Microsoft.NET.ILLink.Tasks >= 9.0.22",
       "MonoGame.Content.Builder.Task >= 3.8.*",
       "MonoGame.Framework.DesktopGL >= 3.8.*"
     ]
@@ -495,12 +354,6 @@
         "framework": "net9.0",
         "targetAlias": "net9.0",
         "dependencies": {
-          "Microsoft.NET.ILLink.Tasks": {
-            "suppressParent": "All",
-            "target": "Package",
-            "version": "[9.0.22, )",
-            "autoReferenced": true
-          },
           "MonoGame.Content.Builder.Task": {
             "target": "Package",
             "version": "[3.8.*, )"
@@ -527,19 +380,11 @@
             "version": "[9.0.22, 9.0.22]"
           },
           {
-            "name": "Microsoft.AspNetCore.App.Runtime.osx-arm64",
-            "version": "[9.0.22, 9.0.22]"
-          },
-          {
             "name": "Microsoft.NETCore.App.Host.osx-arm64",
             "version": "[9.0.22, 9.0.22]"
           },
           {
             "name": "Microsoft.NETCore.App.Ref",
-            "version": "[9.0.22, 9.0.22]"
-          },
-          {
-            "name": "Microsoft.NETCore.App.Runtime.osx-arm64",
             "version": "[9.0.22, 9.0.22]"
           }
         ],
@@ -549,11 +394,6 @@
           }
         },
         "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.403/PortableRuntimeIdentifierGraph.json"
-      }
-    },
-    "runtimes": {
-      "osx-arm64": {
-        "#import": []
       }
     }
   }
