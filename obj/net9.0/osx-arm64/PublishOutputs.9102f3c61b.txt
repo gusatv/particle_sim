@@ -1,0 +1,2 @@
+/Users/gustavwettmarklauritzen/Gitgreier/CS_Project/MyGame/bin/net9.0/osx-arm64/publish/MyGame.pdb
+/Users/gustavwettmarklauritzen/Gitgreier/CS_Project/MyGame/bin/net9.0/osx-arm64/publish/MyGame
