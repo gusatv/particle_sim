@@ -32,6 +32,12 @@ public class Game1 : Game
     private Particle selected_particle = Particle.Sand;
     private int brush_size = 0;
     private Dictionary<Vector2, bool> updatable; 
+    private List<List<Particle>> movables = [
+        [], // Air
+        [Particle.Smoke, Particle.Air],  // Water
+        [Particle.Air, Particle.Water, Particle.Smoke], // Sand
+        [Particle.Air] // Smoke
+    ];
     
     public Game1()
     {
@@ -59,7 +65,7 @@ public class Game1 : Game
                 particles[i].Add(Particle.Air);
             }
         }
-
+        
         base.Initialize();
     }
 
@@ -315,24 +321,9 @@ public class Game1 : Game
     {
         if (x + dirx > 0 && x + dirx < particles[y].Count && y + diry > 0 && y + diry < particles.Count)
         {
-            if (particles[y][x] == Particle.Sand)
+            if (movables[(int)particles[y][x]].Contains(particles[y + diry][x + dirx]))
             {
-                if (particles[y + diry][x + dirx] != Particle.Sand)
-                {
-                    return true;
-                }
-            }else if (particles[y][x] == Particle.Water)
-            {
-                if (particles[y + diry][x + dirx] == Particle.Air)
-                {
-                    return true;
-                }
-            }else if (particles[y][x] == Particle.Smoke)
-            {
-                if (particles[y + diry][x + dirx] == Particle.Air)
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
