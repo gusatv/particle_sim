@@ -34,9 +34,9 @@ public class Game1 : Game
     private Dictionary<Vector2, bool> updatable; 
     private List<List<Particle>> movables = [
         [], // Air
-        [Particle.Smoke, Particle.Air],  // Water
+        [Particle.Air],  // Water
         [Particle.Air, Particle.Water, Particle.Smoke], // Sand
-        [Particle.Air] // Smoke
+        [Particle.Air, Particle.Water] // Smoke
     ];
     
     public Game1()
@@ -44,7 +44,6 @@ public class Game1 : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        
         particles = new List<List<Particle>>();
     }
 
@@ -222,58 +221,58 @@ public class Game1 : Game
                     }
                     if (particles[i][j] == Particle.Sand)
                     {
-                        if (check_pos(j, i, 0, 1))
+                        if (check_pos(j, i, 0, 1, updatable))
                         {
                             move(j, i, 0, 1);
-                        }else if (check_pos(j, i, random_dir, 1))
+                        }else if (check_pos(j, i, random_dir, 1, updatable))
                         {
                             move(j, i, random_dir, 1);
-                        }else if (check_pos(j, i, -random_dir, 1))
+                        }else if (check_pos(j, i, -random_dir, 1, updatable))
                         {
                             move(j, i, -random_dir, 1);
                         }
                     }else if (particles[i][j] == Particle.Water)
                     {
-                        if (check_pos(j, i, 0, 1))
+                        if (check_pos(j, i, 0, 1, updatable))
                         {
                             move(j, i, 0, 1);
-                        }else if (check_pos(j, i, random_dir, 1))
+                        }else if (check_pos(j, i, random_dir, 1, updatable))
                         {
                             move(j, i, random_dir, 1);
-                        }else if (check_pos(j, i, -random_dir, 1))
+                        }else if (check_pos(j, i, -random_dir, 1, updatable))
                         {
                             move(j, i, -random_dir, 1);
-                        }else if (check_pos(j, i, random_dir, 0))
+                        }else if (check_pos(j, i, random_dir, 0, updatable))
                         {
                             move(j, i, random_dir, 0);
-                        }else if (check_pos(j, i, -random_dir, 0))
+                        }else if (check_pos(j, i, -random_dir, 0, updatable))
                         {
                             move(j, i, -random_dir, 0);
                         }
                     }else if (particles[i][j] == Particle.Smoke)
                     {
-                        if (check_pos(j, i, 0, -1))
+                        if (check_pos(j, i, 0, -1, updatable))
                         {
                             move(j, i, 0, -1);
-                        }else if (check_pos(j, i, random_dir, -1))
+                        }else if (check_pos(j, i, random_dir, -1, updatable))
                         {
                             move(j, i, random_dir, -1);
-                        } else if (check_pos(j, i, -random_dir, -1))
+                        } else if (check_pos(j, i, -random_dir, -1, updatable))
                         {
                             move(j, i, -random_dir, -1);
-                        }else if (check_pos(j, i, random_dir, 0))
+                        }else if (check_pos(j, i, random_dir, 0, updatable))
                         {
                             move(j, i, random_dir, 0);
-                        }else if (check_pos(j, i, -random_dir, 0))
+                        }else if (check_pos(j, i, -random_dir, 0, updatable))
                         {
                             move(j, i, -random_dir, 0);
                         }
                     }
                 }
-                else
-                {
-                    updatable.Remove(new Vector2(j, i));
-                }
+                //else
+                //{
+                //    updatable.Remove(new Vector2(j, i));
+                //}
             }
         }
         // TODO: Add your update logic here
@@ -317,13 +316,16 @@ public class Game1 : Game
         base.Draw(gameTime);
     }
 
-    bool check_pos(int x, int y, int dirx, int diry)
+    bool check_pos(int x, int y, int dirx, int diry, Dictionary<Vector2, bool> updatable)
     {
         if (x + dirx > 0 && x + dirx < particles[y].Count && y + diry > 0 && y + diry < particles.Count)
         {
-            if (movables[(int)particles[y][x]].Contains(particles[y + diry][x + dirx]))
+            if (!updatable.ContainsKey(new Vector2(x + dirx, y + diry)))
             {
-                return true;
+                if (movables[(int)particles[y][x]].Contains(particles[y + diry][x + dirx]))
+                {
+                    return true;
+                }
             }
         }
 
@@ -337,6 +339,11 @@ public class Game1 : Game
         particles[y + diry][x + dirx] = particle;
         updatable.Remove(new Vector2(x + dirx, y + diry));
         updatable.Add(new Vector2(x + dirx, y + diry), true);
+        if (particles[y][x] != Particle.Air)
+        {
+            updatable.Remove(new Vector2(x, y));
+            updatable.Add(new Vector2(x, y), true);
+        }
     }
 }
 
