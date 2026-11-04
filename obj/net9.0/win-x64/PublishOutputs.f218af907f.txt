@@ -1,0 +1,4 @@
+/Users/gustavwettmarklauritzen/Gitgreier/CS_Project/MyGame/MyGame.pdb
+/Users/gustavwettmarklauritzen/Gitgreier/CS_Project/MyGame/openal.dll
+/Users/gustavwettmarklauritzen/Gitgreier/CS_Project/MyGame/SDL2.dll
+/Users/gustavwettmarklauritzen/Gitgreier/CS_Project/MyGame/MyGame.exe
