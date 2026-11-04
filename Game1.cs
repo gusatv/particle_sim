@@ -208,95 +208,59 @@ public class Game1 : Game
             {
                 if (!updatable.ContainsKey(new Vector2(j, i)))
                 {
+                    Random random = new Random();
+                    int random_dir = random.Next(0, 2);
+                    if (random_dir == 0)
+                    {
+                        random_dir = -1;
+                    }
                     if (particles[i][j] == Particle.Sand)
                     {
                         if (check_pos(j, i, 0, 1))
                         {
-                            
-                            particles[i][j] = particles[i + 1][j];
-                            particles[i + 1][j] = Particle.Sand;
-                            updatable.Remove(new Vector2(j, i + 1));
-                            updatable.Add(new Vector2(j, i + 1), true);
-                            
-
-                        }else if (check_pos(j, i, -1, 1))
+                            move(j, i, 0, 1);
+                        }else if (check_pos(j, i, random_dir, 1))
                         {
-                            particles[i][j] = particles[i + 1][j - 1];
-                            particles[i + 1][j - 1] = Particle.Sand;
-                            updatable.Remove(new Vector2(j - 1, i + 1));
-                            updatable.Add(new Vector2(j - 1, i + 1), true);
-                        }else if (check_pos(j, i, 1, 1))
+                            move(j, i, random_dir, 1);
+                        }else if (check_pos(j, i, -random_dir, 1))
                         {
-                            particles[i][j] = particles[i + 1][j + 1];
-                            particles[i + 1][j + 1] = Particle.Sand;
-                            updatable.Remove(new Vector2(j + 1, i + 1));
-                            updatable.Add(new Vector2(j + 1, i + 1), true);
+                            move(j, i, -random_dir, 1);
                         }
                     }else if (particles[i][j] == Particle.Water)
                     {
                         if (check_pos(j, i, 0, 1))
                         {
-                            particles[i + 1][j] = Particle.Water;
-                            particles[i][j] = Particle.Air;
-                            updatable.Remove(new Vector2(j, i + 1));
-                            updatable.Add(new Vector2(j, i + 1), true);
-                        }else if (check_pos(j, i, -1, 1))
+                            move(j, i, 0, 1);
+                        }else if (check_pos(j, i, random_dir, 1))
                         {
-                            particles[i + 1][j - 1] = Particle.Water;
-                            particles[i][j] = Particle.Air;
-                            updatable.Remove(new Vector2(j - 1, i + 1));
-                            updatable.Add(new Vector2(j - 1, i + 1), true);
-                        }else if (check_pos(j, i, 1, 1))
+                            move(j, i, random_dir, 1);
+                        }else if (check_pos(j, i, -random_dir, 1))
                         {
-                            particles[i + 1][j + 1] = Particle.Water;
-                            particles[i][j] = Particle.Air;
-                            updatable.Remove(new Vector2(j + 1, i + 1));
-                            updatable.Add(new Vector2(j + 1, i + 1), true);
-                        }else if (check_pos(j, i, -1, 0))
+                            move(j, i, -random_dir, 1);
+                        }else if (check_pos(j, i, random_dir, 0))
                         {
-                            particles[i][j - 1] = Particle.Water;
-                            particles[i][j] = Particle.Air;
-                            updatable.Remove(new Vector2(j - 1, i));
-                            updatable.Add(new Vector2(j - 1, i), true);
-                        }else if (check_pos(j, i, 1, 0))
+                            move(j, i, random_dir, 0);
+                        }else if (check_pos(j, i, -random_dir, 0))
                         {
-                            particles[i][j + 1] = Particle.Water;
-                            particles[i][j] = Particle.Air;
-                            updatable.Remove(new Vector2(j + 1, i));
-                            updatable.Add(new Vector2(j + 1, i), true);
+                            move(j, i, -random_dir, 0);
                         }
                     }else if (particles[i][j] == Particle.Smoke)
                     {
                         if (check_pos(j, i, 0, -1))
                         {
-                            particles[i - 1][j] = Particle.Smoke;
-                            particles[i][j] = Particle.Air;
-                            updatable.Remove(new Vector2(j, i - 1));
-                            updatable.Add(new Vector2(j, i - 1), true);
-                        }else if (check_pos(j, i, -1, -1))
+                            move(j, i, 0, -1);
+                        }else if (check_pos(j, i, random_dir, -1))
                         {
-                            particles[i - 1][j - 1] = Particle.Smoke;
-                            particles[i][j] = Particle.Air;
-                            updatable.Remove(new Vector2(j - 1, i - 1));
-                            updatable.Add(new Vector2(j - 1, i - 1), true);
-                        } else if (check_pos(j, i, 1, -1))
+                            move(j, i, random_dir, -1);
+                        } else if (check_pos(j, i, -random_dir, -1))
                         {
-                            particles[i - 1][j + 1] = Particle.Smoke;
-                            particles[i][j] = Particle.Air;
-                            updatable.Remove(new Vector2(j + 1, i - 1));
-                            updatable.Add(new Vector2(j + 1, i - 1), true);
-                        }else if (check_pos(j, i, -1, 0))
+                            move(j, i, -random_dir, -1);
+                        }else if (check_pos(j, i, random_dir, 0))
                         {
-                            particles[i][j - 1] = Particle.Smoke;
-                            particles[i][j] = Particle.Air;
-                            updatable.Remove(new Vector2(j - 1, i));
-                            updatable.Add(new Vector2(j - 1, i), true);
-                        }else if (check_pos(j, i, 1, 0))
+                            move(j, i, random_dir, 0);
+                        }else if (check_pos(j, i, -random_dir, 0))
                         {
-                            particles[i][j + 1] = Particle.Smoke;
-                            particles[i][j] = Particle.Air;
-                            updatable.Remove(new Vector2(j + 1, i));
-                            updatable.Add(new Vector2(j + 1, i), true);
+                            move(j, i, -random_dir, 0);
                         }
                     }
                 }
@@ -373,6 +337,15 @@ public class Game1 : Game
         }
 
         return false;
+    }
+
+    void move(int x, int y, int dirx, int diry)
+    {
+        Particle particle = particles[y][x];
+        particles[y][x] = particles[y + diry][x + dirx];
+        particles[y + diry][x + dirx] = particle;
+        updatable.Remove(new Vector2(x + dirx, y + diry));
+        updatable.Add(new Vector2(x + dirx, y + diry), true);
     }
 }
 
