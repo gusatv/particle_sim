@@ -14,10 +14,11 @@ enum Particle
     Water,
     Sand,
     Smoke,
-    Rock
+    Rock,
+    Lava,
+    Mud,
+    Ice
 }
-
-
 
 public class Game1 : Game
 {
@@ -31,6 +32,9 @@ public class Game1 : Game
     private Texture2D waterTile;
     private Texture2D gasTile;
     private Texture2D rockTile;
+    private Texture2D lavaTile;
+    private Texture2D mudTile;
+    private Texture2D iceTile;
     private Particle selected_particle = Particle.Sand;
     private int brush_size = 0;
     private Dictionary<Vector2, bool> updatable; 
@@ -38,8 +42,43 @@ public class Game1 : Game
         [], // Air
         [Particle.Air],  // Water
         [Particle.Air, Particle.Water, Particle.Smoke], // Sand
-        [Particle.Air, Particle.Water], // Smoke
+        [Particle.Air, Particle.Water, Particle.Lava], // Smoke
         [], // Rock
+        [Particle.Air],  // Lava
+        [], // Mud
+        [], // Ice
+    ];
+    private List<List<Particle>> interactables = [
+        [], // Air
+        [Particle.Lava, Particle.Sand, Particle.Ice],  // Water
+        [Particle.Lava, Particle.Water], // Sand
+        [Particle.Mud, Particle.Ice], // Smoke
+        [], // Rock
+        [Particle.Water, Particle.Sand, Particle.Ice],  // Lava
+        [], // Mud
+        [], // Ice
+    ];
+
+    private List<int> alternate_chance = [
+        0, // Air
+        0, // Water
+        0, // Sand
+        2, // Smoke
+        0, // Rock
+        0, // Lava
+        0, // Mud
+        0, // Ice
+    ];
+
+    private List<List<Vector2>> movement = [ // last one in list is for alternate movement
+        [Vector2.Zero], // Air
+        [new Vector2(0, 1), new Vector2(100, 1), new Vector2(100, 0), Vector2.Zero], // Water
+        [new Vector2(0, 1), new Vector2(100, 1), Vector2.Zero], // Sand
+        [new Vector2(0, -1), new Vector2(100, -1), new Vector2(100, 0), new Vector2(100, -1)], // Smoke
+        [Vector2.Zero], //Rock
+        [new Vector2(0, 1), new Vector2(100, 1), new Vector2(100, 0), Vector2.Zero], // Lava
+        [Vector2.Zero], // Mud
+        [Vector2.Zero], // Ice
     ];
     private List<Texture2D> textures;
     private bool paused = false;
@@ -86,6 +125,15 @@ public class Game1 : Game
         
         rockTile = new Texture2D(_graphics.GraphicsDevice, size_per_pixel, size_per_pixel);
         create_texture(rockTile, Color.DarkSlateGray, Color.DimGray);
+        
+        lavaTile = new Texture2D(_graphics.GraphicsDevice, size_per_pixel, size_per_pixel);
+        create_texture(lavaTile, Color.DarkOrange, Color.Chocolate);
+        
+        mudTile = new Texture2D(_graphics.GraphicsDevice, size_per_pixel, size_per_pixel);
+        create_texture(mudTile, Color.Peru, Color.Sienna);
+        
+        iceTile = new Texture2D(_graphics.GraphicsDevice, size_per_pixel, size_per_pixel);
+        create_texture(iceTile, Color.Aqua, Color.CornflowerBlue);
         // TODO: use this.Content to load your game content here
     }
     
@@ -146,72 +194,71 @@ public class Game1 : Game
                 {
                     if (!updatable.ContainsKey(new Vector2(j, i)))
                     {
+                        List<Vector2> interactable_dirs = [new Vector2(1, 0), new Vector2(-1, 0), new Vector2(0, 1), new Vector2(0, -1)];
+                        for (int dir = 0; dir < interactable_dirs.Count; dir++)
+                        {
+                            check_interaction(j, i, (int)interactable_dirs[dir].X, (int)interactable_dirs[dir].Y);
+                        }
+
                         Random random = new Random();
                         int random_dir = random.Next(0, 2);
                         if (random_dir == 0)
                         {
                             random_dir = -1;
                         }
+                        bool shold_do_alternate = false;
+                        if (movement[(int)particles[i][j]][movement[(int)particles[i][j]].Count-1] != Vector2.Zero)
+                        {
+                            int alternate_movement = random.Next(0, alternate_chance[(int)particles[i][j]]);
+                            if (alternate_movement == 0)
+                            {
+                                shold_do_alternate = true;
+                            }
+                        }
 
-                        if (particles[i][j] == Particle.Sand)
+                        if (!shold_do_alternate)
                         {
-                            if (check_pos(j, i, 0, 1, updatable))
+                            for (int k = 0; k < movement[(int)particles[i][j]].Count; k++)
                             {
-                                move(j, i, 0, 1);
-                            }
-                            else if (check_pos(j, i, random_dir, 1, updatable))
-                            {
-                                move(j, i, random_dir, 1);
-                            }
-                            else if (check_pos(j, i, -random_dir, 1, updatable))
-                            {
-                                move(j, i, -random_dir, 1);
+                                int dirx = 0;
+                                int diry = 0;
+                                if ((int)movement[(int)particles[i][j]][k].X == 100)
+                                {
+                                    dirx = random_dir;
+                                    diry = (int)movement[(int)particles[i][j]][k].Y;
+                                }
+                                else
+                                {
+                                    dirx = (int)movement[(int)particles[i][j]][k].X;
+                                    diry = (int)movement[(int)particles[i][j]][k].Y;
+                                }
+
+                                if (check_pos(j, i, dirx, diry, updatable))
+                                {
+                                    move(j, i, dirx, diry);
+                                }
+
+                                ;
                             }
                         }
-                        else if (particles[i][j] == Particle.Water)
+                        else
                         {
-                            if (check_pos(j, i, 0, 1, updatable))
+                            int dirx = 0;
+                            int diry = 0;
+                            if ((int)movement[(int)particles[i][j]][movement[(int)particles[i][j]].Count-1].X == 100)
                             {
-                                move(j, i, 0, 1);
+                                dirx = random_dir;
+                                diry = (int)movement[(int)particles[i][j]][movement[(int)particles[i][j]].Count-1].Y;
                             }
-                            else if (check_pos(j, i, random_dir, 1, updatable))
+                            else
                             {
-                                move(j, i, random_dir, 1);
+                                dirx = (int)movement[(int)particles[i][j]][movement[(int)particles[i][j]].Count-1].X;
+                                diry = (int)movement[(int)particles[i][j]][movement[(int)particles[i][j]].Count-1].Y;
                             }
-                            else if (check_pos(j, i, -random_dir, 1, updatable))
+
+                            if (check_pos(j, i, dirx, diry, updatable))
                             {
-                                move(j, i, -random_dir, 1);
-                            }
-                            else if (check_pos(j, i, random_dir, 0, updatable))
-                            {
-                                move(j, i, random_dir, 0);
-                            }
-                            else if (check_pos(j, i, -random_dir, 0, updatable))
-                            {
-                                move(j, i, -random_dir, 0);
-                            }
-                        }
-                        else if (particles[i][j] == Particle.Smoke)
-                        {
-                            if (check_pos(j, i, 0, -1, updatable))
-                            {
-                                move(j, i, 0, -1);
-                            }
-                            else if (check_pos(j, i, random_dir, -1, updatable))
-                            {
-                                move(j, i, random_dir, -1);
-                            }
-                            else if (check_pos(j, i, -random_dir, -1, updatable))
-                            {
-                                move(j, i, -random_dir, -1);
-                            }
-                            else if (check_pos(j, i, random_dir, 0, updatable))
-                            {
-                                move(j, i, random_dir, 0);
-                            }
-                            else if (check_pos(j, i, -random_dir, 0, updatable))
-                            {
-                                move(j, i, -random_dir, 0);
+                                move(j, i, dirx, diry);
                             }
                         }
                     }
@@ -238,6 +285,21 @@ public class Game1 : Game
                 paused = !paused;
             }
         }
+
+        if (newState.IsKeyDown(Keys.Back))
+        {
+            if (!oldState.IsKeyDown(Keys.Back))
+            {
+                for (int i = 0; i < particles.Count; i++)
+                {
+                    for (int j = 0; j < particles[i].Count; j++)
+                    {
+                        particles[i][j] = Particle.Air;
+                    }
+                }
+            }
+        }
+        
         if (Keyboard.GetState().IsKeyDown(Keys.Up))
         {
             if (!oldState.IsKeyDown(Keys.Up))
@@ -254,6 +316,7 @@ public class Game1 : Game
                 }
             }
         }
+        
         if (Keyboard.GetState().IsKeyDown(Keys.S))
         {
             if (!oldState.IsKeyDown(Keys.S))
@@ -284,7 +347,26 @@ public class Game1 : Game
             {
                 selected_particle = Particle.Rock;
             }
+        }else if (Keyboard.GetState().IsKeyDown(Keys.L))
+        {
+            if (!oldState.IsKeyDown(Keys.L))
+            {
+                selected_particle = Particle.Lava;
+            }
+        }else if (Keyboard.GetState().IsKeyDown(Keys.M))
+        {
+            if (!oldState.IsKeyDown(Keys.M))
+            {
+                selected_particle = Particle.Mud;
+            }
+        }else if (Keyboard.GetState().IsKeyDown(Keys.I))
+        {
+            if (!oldState.IsKeyDown(Keys.I))
+            {
+                selected_particle = Particle.Ice;
+            }
         }
+            
         oldState = newState;
     }
     
@@ -363,6 +445,59 @@ public class Game1 : Game
         }
         tile.SetData<Color>(texture_color);
         textures.Add(tile);
+    }
+
+    void check_interaction(int x, int y, int dirx, int diry)
+    {
+        if (x + dirx > 0 && x + dirx < particles[y].Count && y + diry > 0 && y + diry < particles.Count)
+        {
+            if (interactables[(int)particles[y][x]].Contains(particles[y + diry][x + dirx]))
+            {
+                interact(x, y, dirx, diry);
+            }
+        }
+    }
+    
+    void interact(int x, int y, int dirx, int diry)
+    {
+        if (particles[y][x] == Particle.Lava && particles[y+diry][x+dirx] == Particle.Water || particles[y][x] == Particle.Water && particles[y+diry][x+dirx] == Particle.Lava)
+        {
+            particles[y+diry][x+dirx] = Particle.Rock;
+            particles[y][x] = Particle.Smoke;
+        }else if (particles[y][x] == Particle.Lava && particles[y + diry][x + dirx] == Particle.Sand ||
+                  particles[y][x] == Particle.Sand && particles[y + diry][x + dirx] == Particle.Lava)
+        {
+            particles[y+diry][x+dirx] = Particle.Lava;
+            particles[y][x] = Particle.Lava;
+        }else if (particles[y][x] == Particle.Water && particles[y + diry][x + dirx] == Particle.Sand ||
+                  particles[y][x] == Particle.Sand && particles[y + diry][x + dirx] == Particle.Water)
+        {
+            if (particles[y][x] == Particle.Sand)
+            {
+                particles[y][x] = Particle.Mud;
+            }
+            else
+            {
+                particles[y + diry][x + dirx] = Particle.Mud;
+            }
+        }else if (particles[y][x] == Particle.Smoke && particles[y + diry][x + dirx] == Particle.Mud)
+        {
+            particles[y + diry][x + dirx] = Particle.Sand;
+        }else if (particles[y][x] == Particle.Smoke && particles[y + diry][x + dirx] == Particle.Ice)
+        {
+            particles[y + diry][x + dirx] = Particle.Water;
+        }else if (particles[y][x] == Particle.Water && particles[y + diry][x + dirx] == Particle.Ice)
+        {
+            Random random = new Random();
+            int randint = random.Next(0, 10);
+            if (randint == 0)
+            {
+                particles[y][x] = Particle.Ice;
+            }
+        }else if (particles[y][x] == Particle.Lava && particles[y + diry][x + dirx] == Particle.Ice)
+        {
+            particles[y + diry][x + dirx] = Particle.Water;
+        }
     }
 }
 
